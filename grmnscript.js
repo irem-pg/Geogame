@@ -132,11 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
             cityElement.addEventListener('touchend', (e) => {
                 if (activeCity) {
                     const touch = e.changedTouches[0];
-                    const cityData = JSON.parse(activeCity.getAttribute('data-coordinates'));
-                    const cityName = cityData.name;
-                    const cityCoords = cityData.coords;
+
+                    // Get city data from the activeCity element
+                    const cityName = activeCity.textContent;
+                    const cityCoords = JSON.parse(activeCity.getAttribute('data-coords'));
 
                     // Get the drop position on the map
+                    const mapContainer = document.getElementById('map');
                     const x = touch.pageX - mapContainer.offsetLeft;
                     const y = touch.pageY - mapContainer.offsetTop;
 
@@ -184,19 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
             handleDrop(e, cityName, cityCoords, lat, lng);
         });
 
-        // Mobile touch drop handler
-        mapContainer.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            const touch = e.changedTouches[0];
-            const x = touch.pageX - mapContainer.offsetLeft;
-            const y = touch.pageY - mapContainer.offsetTop;
-
-            const latlng = map.containerPointToLatLng([x, y]);
-            const lat = latlng.lat;
-            const lng = latlng.lng;
-
-            handleDrop(e, cityName, cityCoords, lat, lng);
-        });
     };
 
     // Handle drop logic for both touch and drag events
