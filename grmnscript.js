@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (FoundCities.length > (totalcities / 2)) {
             endTitle = 'Congratulations!';
             endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
-        } else if (FoundCities.length > 4) {
+        } else if ((totalcities / 2) > FoundCities.length > (totalcities / 4)) {
             endTitle = 'Better luck next time!';
             endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
         } else {

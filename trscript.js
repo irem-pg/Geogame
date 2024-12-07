@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let totalcities = cities.length;
     let FoundCities = [];
-    let score = 5;
+    let score = 15;
     document.getElementById("score").textContent = score;
 
     // Function to pick a random city for the color section
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (FoundCities.length > (totalcities / 2)) {
             endTitle = 'Congratulations!';
             endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
-        } else if (FoundCities.length > 4) {
+        } else if ((totalcities / 2) > FoundCities.length > (totalcities / 4)) {
             endTitle = 'Better luck next time!';
             endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
         } else {
@@ -178,14 +178,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Optionally update the UI based on touch movement (not necessary for this case)
             });
 
+            // Handle touchend (for mobile)
             cityElement.addEventListener('touchend', (e) => {
-                // Handle touch end, similar to drop logic
-                e.preventDefault();
-                const cityName = e.target.textContent;
-                const cityCoords = JSON.parse(e.target.getAttribute('data-coords'));
-                
-                // Trigger the drop event on mobile
-                handleDrop(e, cityName, cityCoords);
+                if (activeCity) {
+                    const touch = e.changedTouches[0];
+
+                    // Get city data from the activeCity element
+                    const cityName = activeCity.textContent;
+                    const cityCoords = JSON.parse(activeCity.getAttribute('data-coords'));
+
+                    // Get the drop position on the map
+                    const mapContainer = document.getElementById('map');
+                    const x = touch.pageX - mapContainer.offsetLeft;
+                    const y = touch.pageY - mapContainer.offsetTop;
+
+                    // Convert touch position to map's lat/lng
+                    const latlng = map.containerPointToLatLng([x, y]);
+                    const lat = latlng.lat;
+                    const lng = latlng.lng;
+
+                    // Handle the drop logic (score update, marker placement)
+                    handleDrop(cityName, cityCoords, lat, lng);
+
+                    // Reset the activeCity
+                    activeCity.style.position = '';
+                    activeCity.style.pointerEvents = ''; // Enable interaction again
+                    activeCity = null;
+                }
             });
         });
 
@@ -213,20 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const lng = latlng.lng;
 
             // Handle drop logic
-            handleDrop(e, cityName, cityCoords, lat, lng);
-        });
-
-        // Mobile touch drop handler
-        mapContainer.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            const touch = e.changedTouches[0];
-            const x = touch.pageX - mapContainer.offsetLeft;
-            const y = touch.pageY - mapContainer.offsetTop;
-
-            const latlng = map.containerPointToLatLng([x, y]);
-            const lat = latlng.lat;
-            const lng = latlng.lng;
-
             handleDrop(e, cityName, cityCoords, lat, lng);
         });
     };
