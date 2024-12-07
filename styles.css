@@ -1,0 +1,236 @@
+/* Accent color */
+:root {
+    --accent-color: #ff6347; /* Tomato red */
+    --background-color: #ffefd5; /* Light pastel peach */
+    --text-color: #333333; /* Dark text */
+}
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Sidebar Styling */
+.sidebar {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 100;
+}
+
+.sidebar-btn {
+    padding: 12px 18px;
+    font-size: 1.1em;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.sidebar-btn:hover {
+    background-color: #e74c3c;
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Sliding Box Styling */
+.sliding-box {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 99, 71, 0.8); /* Tomato red with transparency */
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.box-content {
+    background-color: var(--background-color); /* Match body background */
+    padding: 20px;
+    border-radius: 15px; /* Rounded corners to match other elements */
+    max-width: 500px;
+    margin: auto;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+    border: 2px solid var(--accent-color); /* Tomato red border for accent */
+}
+
+.sliding-box h1 {
+    font-size: 2em;
+    color: var(--accent-color); /* Tomato red for headings */
+    margin-bottom: 10px;
+}
+
+.sliding-box p {
+    font-size: 1.1em;
+    color: var(--text-color); /* Dark text for readability */
+    margin-bottom: 20px;
+}
+
+.sliding-box button.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.2em;
+    background-color: var(--accent-color); /* Match the button with the accent */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 5px 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sliding-box button.close-btn:hover {
+    background-color: #e74c3c; /* Darker shade for hover */
+    transform: scale(1.1);
+}
+
+.sliding-box.active {
+    display: block;
+}
+
+/* Header Styling */
+header {
+    text-align: center;
+    margin-top: 30px;
+    background-color: #ffffff;
+    padding: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 10px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Background Divider between Headers */
+.background-divider {
+    width: 100%;
+    height: 15px;
+    background-color: #ddd;
+}
+
+/* Second Header Section */
+.second-header {
+    background-color: #e0e0e0;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sub-header {
+    font-size: 1.3em;
+    color: #666;
+}
+
+/* Five Color Sections Styling */
+.color-sections {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.color-section {
+    width: 150px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.color-section:hover {
+    transform: scale(1.05);
+}
+
+.red { background-color: var(--accent-color); }
+.green { background-color: #2ecc71; }
+.blue { background-color: #3498db; }
+.yellow { background-color: #f1c40f; }
+.purple { background-color: #9b59b6; }
+
+/* Footer Image Styling */
+footer {
+    margin-bottom: 30px;
+}
+
+.footer-image {
+    width: 100%;
+    max-width: 1200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+#map {
+    width: 1000px; 
+    height: 500px; /* set a height for the container */
+    margin-bottom: 20px;
+    transform: none !important;
+}
+
+#feedback {
+    position: fixed; /* Fixed position relative to the viewport */
+    bottom: 20px; /* 20px from the bottom of the screen */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Centering adjustment */
+    background: #f8f9fa; /* Light background */
+    color: #000;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .color-sections {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .color-section {
+        width: 100%;
+    }
+
+    .sliding-box {
+        width: 90%; /* Slightly smaller on mobile */
+    }
+
+    header h1 {
+        font-size: 2em; /* Slightly smaller font */
+    }
+
+    .sidebar-btn {
+        font-size: 0.9em; /* Smaller sidebar buttons */
+    }
+}

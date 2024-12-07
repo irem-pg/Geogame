@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cities and Countries</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar with Buttons -->
+    <div class="sidebar">
+        <button class="sidebar-btn" onclick="toggleBox('box1')">How to Play</button>
+    </div>
+
+    <!-- Sliding Box Section -->
+    <div id="box1" class="sliding-box">
+        <div class="box-content">
+            <button class="close-btn" onclick="closeBox('box1')">X</button>
+            <h1>How to Play</h1>
+            <p>Hold and drag the city names to their locations on the map.<br />
+            For every correct placement you will earn one point.<br />
+            For every incorrect placement you will lose one point.</p>
+        </div>
+    </div>
+
+    <div id="box2" class="sliding-box">
+        <div class="box-content">
+            <button class="close-btn" onclick="location.reload()">X</button>
+            <h1><span id="endTitle"></span></h1>
+            <p><span id="endText"></span></p>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Cities of Countries</h1>
+    </header>
+
+    <!-- Background between headers -->
+    <div class="background-divider"></div>
+
+    <!-- Second Header Section -->
+    <section class="second-header">
+        <h1>Germany<br />Score: <span id="score"></span></h1>
+        <!-- Dropdown Menu Section -->
+        <nav>
+            <label for="menu">Select a Country:</label>
+            <select id="menu" onchange="redirectToPage()">
+                <option>Country</option>
+                <option value="option1">USA</option>
+                <option value="option2">Germany</option>
+                <option value="option3">Turkey</option>
+            </select>
+        </nav>
+    </section>
+
+    <!-- Five colored sections with text -->
+    <section class="color-sections">
+    <script src="grmnscript.js"></script>
+    <div class="color-section red">
+        <p></p>
+    </div>
+    <div class="color-section green">
+        <p></p>
+    </div>
+    <div class="color-section blue">
+        <p></p>
+    </div>
+    <div class="color-section yellow">
+        <p></p>
+    </div>
+    <div class="color-section purple">
+        <p></p>
+    </div>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map.js" lat='51' lon="10" zoom="6" country="Germany"></script>
+</section>
+
+    <script src="script.js"></script>
+</body>
+</html>

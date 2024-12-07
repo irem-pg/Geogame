@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Web Page Layout</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar with Buttons -->
+    <div class="sidebar">
+        <button class="sidebar-btn" onclick="toggleBox('box1')">How to Play</button>
+    </div>
+
+    <!-- Sliding Box Section -->
+    <div id="box1" class="sliding-box">
+        <div class="box-content">
+            <button class="close-btn" onclick="closeBox('box1')">Close</button>
+            <h1>How to Play</h1>
+            <p>Hold and drag the city names to their locations on the map.<br />
+            For every correct placement you will earn one point.<br />
+            For every incorrect placement you will lose one point.</p>
+        </div>
+    </div>
+
+
+    <!-- Header Section -->
+    <header>
+        <h1>Cities of Countries</h1>
+    </header>
+
+    <!-- Background between headers -->
+    <div class="background-divider"></div>
+
+    <!-- Second Header Section -->
+    <section class="second-header">
+        <!-- Dropdown Menu Section -->
+        <nav>
+            <label for="menu">Select a Country:</label>
+            <select id="menu" onchange="redirectToPage()">
+                <option>Pick a Country</option>
+                <option value="option1">USA</option>
+                <option value="option2">Germany</option>
+                <option value="option3">Turkiye</option>
+            </select>
+        </nav>
+    </section>
+
+    <footer>
+        <img src="holder.png" alt="Description of the image">
+    </footer>
+    
+
+    <script src="script.js"></script>
+</body>
+</html>
