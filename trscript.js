@@ -83,17 +83,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Zonguldak", coords: [40.6542, 33.7984] }
     ];
 
-    let totalcities= cities.length
-    let FoundCities= []
-    let score = 10
-    document.getElementById("score").textContent = score
+    let totalcities = cities.length;
+    let FoundCities = [];
+    let score = 5;
+    document.getElementById("score").textContent = score;
 
     // Function to pick a random city for the color section
     function getRandomCity() {
-        const randomIndex = Math.floor(Math.random() * cities.length); // Get a random index
-        const chosenCity = cities[randomIndex]; // Get the city at that index
-        cities.splice(randomIndex, 1); // Remove the city from the list
-        return chosenCity; // Return the chosen city
+        const randomIndex = Math.floor(Math.random() * cities.length);
+        const chosenCity = cities[randomIndex];
+        cities.splice(randomIndex, 1);
+        return chosenCity;
     }
 
     // Helper function to calculate distance between two coordinates
@@ -111,40 +111,35 @@ document.addEventListener('DOMContentLoaded', () => {
         return R * c; // Distance in kilometers
     }
 
-    //score rearrangment functions
+    //score rearrangement functions
     function add() {
         score++;
-        document.getElementById("score").textContent = score
+        document.getElementById("score").textContent = score;
     }
 
     function sub() {
         score--;
-        document.getElementById("score").textContent = score
+        document.getElementById("score").textContent = score;
     }
 
-    //Function for the endgame message
+    // Function for the endgame message
     function ending() {
         toggleBox('box2'); // Open the end game box
     
         let endTitle = '';
         let endText = '';
     
-        if (FoundCities.length > (totalcities/2)) { // More than half the cities found
+        if (FoundCities.length > (totalcities / 2)) {
             endTitle = 'Congratulations!';
             endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
-        } else if (FoundCities.length > 4) { // Between 25% and 50% of cities found
+        } else if (FoundCities.length > 4) {
             endTitle = 'Better luck next time!';
             endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
-        } else { // Less than 25% of cities found
+        } else {
             endTitle = ':(';
             endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
         }
 
-        // Log the variables to check if they are set properly
-        console.log('endTitle:', endTitle);
-        console.log('endText:', endText);
-    
-        // Set the content for the endTitle and endText spans
         document.getElementById('endTitle').textContent = endTitle;
         document.getElementById('endText').textContent = endText;
     }
@@ -154,12 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Randomly assign city names to the color sections and buttons
         const colorSections = document.querySelectorAll('.color-section');
         colorSections.forEach(section => {
-            const city = getRandomCity(); // Get a random city
-            section.querySelector('p').textContent = city.name; // Set the city name in the section
-            section.querySelector('p').setAttribute('data-coords', JSON.stringify(city.coords)); // Store coords
+            const city = getRandomCity();
+            section.querySelector('p').textContent = city.name;
+            section.querySelector('p').setAttribute('data-coords', JSON.stringify(city.coords));
         });
 
-        // Make the city names draggable
+        // Make the city names draggable on desktop and mobile
         const cityElements = document.querySelectorAll('.color-section p');
         cityElements.forEach(cityElement => {
             cityElement.setAttribute('draggable', 'true'); // Make the city name draggable
@@ -168,6 +163,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.dataTransfer.setData('text', e.target.textContent); // Store the city name
                 e.dataTransfer.setData('coords', e.target.getAttribute('data-coords')); // Store the coords
                 e.target.setAttribute('data-dragged', 'true'); // Mark this city element as being dragged
+            });
+
+            // Mobile touch events
+            cityElement.addEventListener('touchstart', (e) => {
+                const touch = e.changedTouches[0];
+                e.dataTransfer.setData('text', e.target.textContent);
+                e.dataTransfer.setData('coords', e.target.getAttribute('data-coords'));
+                e.target.setAttribute('data-dragged', 'true');
+            });
+
+            cityElement.addEventListener('touchmove', (e) => {
+                const touch = e.changedTouches[0];
+                // Optionally update the UI based on touch movement (not necessary for this case)
+            });
+
+            cityElement.addEventListener('touchend', (e) => {
+                // Handle touch end, similar to drop logic
+                e.preventDefault();
+                const cityName = e.target.textContent;
+                const cityCoords = JSON.parse(e.target.getAttribute('data-coords'));
+                
+                // Trigger the drop event on mobile
+                handleDrop(e, cityName, cityCoords);
             });
         });
 
@@ -180,68 +198,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
         mapContainer.addEventListener('drop', (e) => {
             e.preventDefault();
-        
+
             // Get the city name and coords from the drag event
             const cityName = e.dataTransfer.getData('text');
             const cityCoords = JSON.parse(e.dataTransfer.getData('coords'));
-        
+
             // Get the mouse position relative to the map container
             const x = e.offsetX;
             const y = e.offsetY;
-        
+
             // Convert screen coordinates to map's lat/lng
             const latlng = map.containerPointToLatLng([x, y]);
             const lat = latlng.lat;
             const lng = latlng.lng;
-        
-            // Calculate distance and give feedback
-            const distance = calculateDistance(cityCoords, [lat, lng]);
-            const threshold = 100;
-        
-            console.log(cityCoords, lat, lng, distance);
-        
-            const draggedCityElement = document.querySelector('[data-dragged="true"]');
-            if (draggedCityElement) {
-                const section = draggedCityElement.closest('.color-section');
-        
-                if (distance <= threshold) {
-                    FoundCities.push(cityName);
-        
-                    const a = cityCoords[0] + 0.8
-                    const b = cityCoords[1] - 2
-                    const markCoords = [a, b]
-        
-                    L.marker(markCoords).addTo(map)
-                        .bindPopup(cityName)
-                        .openPopup();
-        
-                    if (cities.length > 0) {
-                        const newCity = getRandomCity();
-                        section.querySelector('p').textContent = newCity.name;
-                        section.querySelector('p').setAttribute('data-coords', JSON.stringify(newCity.coords));
-                    } else {
-                        section.querySelector('p').textContent = 'Almost done!';
-                        section.querySelector('p').setAttribute('data-coords', JSON.stringify(null));
-                    }
-        
-                    add();
-                } else {
-                    sub();
-                }
-        
-                // Check if all sections are 'Almost done'
-                const allSectionsAlmostDone = Array.from(document.querySelectorAll('.color-section')).every(section => {
-                    return section.querySelector('p').textContent === 'Almost done!';
-                });
-        
-                if (allSectionsAlmostDone || score <= 0) {
-                    if (!document.getElementById('box2').classList.contains('active')) {
-                        ending();
-                    }
-                }
-        
-                draggedCityElement.removeAttribute('data-dragged');
-            }
+
+            // Handle drop logic
+            handleDrop(e, cityName, cityCoords, lat, lng);
+        });
+
+        // Mobile touch drop handler
+        mapContainer.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            const x = touch.pageX - mapContainer.offsetLeft;
+            const y = touch.pageY - mapContainer.offsetTop;
+
+            const latlng = map.containerPointToLatLng([x, y]);
+            const lat = latlng.lat;
+            const lng = latlng.lng;
+
+            handleDrop(e, cityName, cityCoords, lat, lng);
         });
     };
+
+    // Handle drop logic for both touch and drag events
+    function handleDrop(e, cityName, cityCoords, lat, lng) {
+        const distance = calculateDistance(cityCoords, [lat, lng]);
+        const threshold = 100;
+
+        if (distance <= threshold) {
+            FoundCities.push(cityName);
+
+            const markCoords = [cityCoords[0] + 0.8, cityCoords[1] - 2];
+            L.marker(markCoords).addTo(map)
+                .bindPopup(cityName)
+                .openPopup();
+
+            add();
+        } else {
+            sub();
+        }
+
+        // Check if all sections are 'Almost done'
+        const allSectionsAlmostDone = Array.from(document.querySelectorAll('.color-section')).every(section => {
+            return section.querySelector('p').textContent === 'Almost done!';
+        });
+
+        if (allSectionsAlmostDone || score <= 0) {
+            if (!document.getElementById('box2').classList.contains('active')) {
+                ending();
+            }
+        }
+    }
 });
