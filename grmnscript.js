@@ -89,30 +89,27 @@ document.addEventListener('DOMContentLoaded', () => {
             section.querySelector('p').setAttribute('data-coords', JSON.stringify(city.coords));
         });
 
-        // Handle dragging and dropping events for both desktop and mobile
+        // Enable map container to accept drops
         const mapContainer = document.getElementById('map');
 
-        // Store the currently dragged city element
+        // Handle dragging and dropping events for both desktop and mobile
         let activeCity = null;
-
-        // Handle touchstart (for mobile)
         const cityElements = document.querySelectorAll('.color-section p');
 
+        // Handle touchstart (for mobile)
         cityElements.forEach(cityElement => {
             cityElement.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 activeCity = cityElement;
                 cityElement.setAttribute('data-dragged', 'true');
-
-                // Store the city data
                 cityElement.setAttribute('data-coordinates', JSON.stringify({
                     name: cityElement.textContent,
                     coords: JSON.parse(cityElement.getAttribute('data-coords'))
                 }));
 
-                // Set the city to absolute position and prevent other interactions
+                // Make sure the dragged city is visible while moving
                 activeCity.style.position = 'absolute';
-                activeCity.style.pointerEvents = 'none'; // Disable interactions with other elements
+                activeCity.style.pointerEvents = 'none'; // Prevent interaction with other elements
             });
 
             // Handle touchmove (for mobile)
@@ -122,16 +119,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     const x = touch.pageX - mapContainer.offsetLeft;
                     const y = touch.pageY - mapContainer.offsetTop;
 
-                    // Update the city element position as the user moves their finger
+                    // Move the element visually while dragging
                     activeCity.style.left = `${x - activeCity.offsetWidth / 2}px`;
                     activeCity.style.top = `${y - activeCity.offsetHeight / 2}px`;
                 }
             });
 
-            // Handle touchend (for mobile)
+            // Handle touchend (for mobile) and drop
             cityElement.addEventListener('touchend', (e) => {
                 if (activeCity) {
                     const touch = e.changedTouches[0];
+                    const cityData = JSON.parse(activeCity.getAttribute('data-coordinates'));
+                    const cityName = cityData.name;
+                    const cityCoords = cityData.coords;
 
                     // Get the drop position on the map
                     const x = touch.pageX - mapContainer.offsetLeft;
@@ -142,52 +142,47 @@ document.addEventListener('DOMContentLoaded', () => {
                     const lat = latlng.lat;
                     const lng = latlng.lng;
 
-                    // Get the city data
-                    const cityData = JSON.parse(activeCity.getAttribute('data-coordinates'));
-                    const cityName = cityData.name;
-                    const cityCoords = cityData.coords;
+                    // Handle the drop logic (score update, marker placement)
+                    handleDrop(cityName, cityCoords, lat, lng);
 
-                    // Handle the drop logic (calculate distance and update score)
-                    const distance = calculateDistance(cityCoords, [lat, lng]);
-                    const threshold = 100; // Set threshold distance (in km)
-
-                    console.log('City:', cityName, 'Coords:', cityCoords, 'Dropped At:', [lat, lng], 'Distance:', distance);
-
-                    if (distance <= threshold) {
-                        // Correct drop, increase score
-                        FoundCities.push(cityName);
-                        const a = cityCoords[0] + 0.8;
-                        const b = cityCoords[1] - 2;
-                        const markCoords = [a, b];
-
-                        // Place marker on the map
-                        L.marker(markCoords).addTo(map)
-                            .bindPopup(cityName)
-                            .openPopup();
-
-                        add();
-                    } else {
-                        // Incorrect drop, decrease score
-                        sub();
-                    }
-
-                    // Reset the city element's position
+                    // Reset the activeCity
                     activeCity.style.position = '';
                     activeCity.style.pointerEvents = ''; // Enable interaction again
                     activeCity = null;
-
-                    // Check if all sections are 'Almost done'
-                    const allSectionsAlmostDone = Array.from(document.querySelectorAll('.color-section')).every(section => {
-                        return section.querySelector('p').textContent === 'Almost done!';
-                    });
-
-                    if (allSectionsAlmostDone || score <= 0) {
-                        if (!document.getElementById('box2').classList.contains('active')) {
-                            ending();
-                        }
-                    }
                 }
             });
         });
     };
+
+    // Handle drop logic for both touch and drag events
+    function handleDrop(cityName, cityCoords, lat, lng) {
+        const distance = calculateDistance(cityCoords, [lat, lng]);
+        const threshold = 100;
+
+        if (distance <= threshold) {
+            FoundCities.push(cityName);
+            const a = cityCoords[0] + 0.8;
+            const b = cityCoords[1] - 2;
+            const markCoords = [a, b];
+
+            L.marker(markCoords).addTo(map)
+                .bindPopup(cityName)
+                .openPopup();
+
+            add();
+        } else {
+            sub();
+        }
+
+        // Check if all sections are 'Almost done'
+        const allSectionsAlmostDone = Array.from(document.querySelectorAll('.color-section')).every(section => {
+            return section.querySelector('p').textContent === 'Almost done!';
+        });
+
+        if (allSectionsAlmostDone || score <= 0) {
+            if (!document.getElementById('box2').classList.contains('active')) {
+                ending();
+            }
+        }
+    }
 });
