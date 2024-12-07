@@ -94,65 +94,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle dragging and dropping events for both desktop and mobile
         let activeCity = null;
-        const cityElements = document.querySelectorAll('.color-section p');
+        const cityElement = document.querySelectorAll('.color-section p');
 
         // Handle touchstart (for mobile)
-        cityElements.forEach(cityElement => {
-            cityElement.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                activeCity = cityElement;
-                cityElement.setAttribute('data-dragged', 'true');
-                cityElement.setAttribute('data-coordinates', JSON.stringify({
-                    name: cityElement.textContent,
-                    coords: JSON.parse(cityElement.getAttribute('data-coords'))
-                }));
+        cityElement.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            activeCity = cityElement;
+            activeCity.setAttribute('data-dragged', 'true');
+            activeCity.style.position = 'absolute';
+            activeCity.style.pointerEvents = 'none'; // Prevent interaction with other elements
 
-                // Make sure the dragged city is visible while moving
-                activeCity.style.position = 'absolute';
-                activeCity.style.pointerEvents = 'none'; // Prevent interaction with other elements
-            });
-
-            // Handle touchmove (for mobile)
-            cityElement.addEventListener('touchmove', (e) => {
-                if (activeCity) {
-                    const touch = e.touches[0];
-                    const x = touch.pageX - mapContainer.offsetLeft;
-                    const y = touch.pageY - mapContainer.offsetTop;
-
-                    // Move the element visually while dragging
-                    activeCity.style.left = `${x - activeCity.offsetWidth / 2}px`;
-                    activeCity.style.top = `${y - activeCity.offsetHeight / 2}px`;
-                }
-            });
-
-            // Handle touchend (for mobile) and drop
-            cityElement.addEventListener('touchend', (e) => {
-                if (activeCity) {
-                    const touch = e.changedTouches[0];
-                    const cityData = JSON.parse(activeCity.getAttribute('data-coordinates'));
-                    const cityName = cityData.name;
-                    const cityCoords = cityData.coords;
-
-                    // Get the drop position on the map
-                    const x = touch.pageX - mapContainer.offsetLeft;
-                    const y = touch.pageY - mapContainer.offsetTop;
-
-                    // Convert touch position to map's lat/lng
-                    const latlng = map.containerPointToLatLng([x, y]);
-                    const lat = latlng.lat;
-                    const lng = latlng.lng;
-
-                    // Handle the drop logic (score update, marker placement)
-                    handleDrop(cityName, cityCoords, lat, lng);
-
-                    // Reset the activeCity
-                    activeCity.style.position = '';
-                    activeCity.style.pointerEvents = ''; // Enable interaction again
-                    activeCity = null;
-                }
-            });
+            // Store the offset of the touch within the element
+            const rect = activeCity.getBoundingClientRect();
+            activeCity.dataset.offsetX = touch.pageX - rect.left;
+            activeCity.dataset.offsetY = touch.pageY - rect.top;
         });
-    };
+
+        // Handle touchmove (for mobile)
+        cityElement.addEventListener('touchmove', (e) => {
+            if (activeCity) {
+                const touch = e.touches[0];
+                const offsetX = parseFloat(activeCity.dataset.offsetX);
+                const offsetY = parseFloat(activeCity.dataset.offsetY);
+
+                // Update the position of the element to follow the finger
+                activeCity.style.left = `${touch.pageX - offsetX}px`;
+                activeCity.style.top = `${touch.pageY - offsetY}px`;
+            }
+        });
+
+        // Handle touchend (for mobile)
+        cityElement.addEventListener('touchend', (e) => {
+            if (activeCity) {
+                const touch = e.changedTouches[0];
+                const cityData = JSON.parse(activeCity.getAttribute('data-coordinates'));
+                const cityName = cityData.name;
+                const cityCoords = cityData.coords;
+
+                // Get the drop position on the map
+                const x = touch.pageX - mapContainer.offsetLeft;
+                const y = touch.pageY - mapContainer.offsetTop;
+
+                // Convert touch position to map's lat/lng
+                const latlng = map.containerPointToLatLng([x, y]);
+                const lat = latlng.lat;
+                const lng = latlng.lng;
+
+                // Handle the drop logic (score update, marker placement)
+                handleDrop(cityName, cityCoords, lat, lng);
+
+                // Reset the activeCity
+                activeCity.style.position = '';
+                activeCity.style.pointerEvents = ''; // Enable interaction again
+                activeCity = null;
+            }
+        });
 
     // Handle drop logic for both touch and drag events
     function handleDrop(cityName, cityCoords, lat, lng) {
