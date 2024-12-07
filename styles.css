@@ -179,15 +179,14 @@ header h1 {
 
 /* Footer Image Styling */
 footer {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .footer-image {
     width: 100%;
-    max-width: 1200px;
+    max-width: 600px;
     height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border: 1px solid #ccc;
 }
 
 #map {

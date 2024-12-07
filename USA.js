@@ -100,13 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
         if (FoundCities.length > (totalcities/2)) { // More than half the cities found
             endTitle = 'Congratulations!';
-            endText = "You have found ${FoundCities.length}/${totalcities} cities.";
+            endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
         } else if (FoundCities.length > 4) { // Between 25% and 50% of cities found
             endTitle = 'Better luck next time!';
-            endText = "You have found ${FoundCities.length}/${totalcities} cities.";
+            endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
         } else { // Less than 25% of cities found
             endTitle = ':(';
-            endText = "You have found ${FoundCities.length}/${totalcities} cities.";
+            endText = `You have found ${FoundCities.length}/${totalcities} cities.`;
         }
 
         // Log the variables to check if they are set properly
@@ -176,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (distance <= threshold) {
                     FoundCities.push(cityName);
         
-                    const a = cityCoords[0] + 0.8
-                    const b = cityCoords[1] - 2
+                    const a = cityCoords[0] 
+                    const b = cityCoords[1] -2
                     const markCoords = [a, b]
         
                     L.marker(markCoords).addTo(map)
