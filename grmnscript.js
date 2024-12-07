@@ -100,63 +100,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.target.setAttribute('data-dragged', 'true'); // Mark this city element as being dragged
             });
 
-            // Handle touchstart (for mobile)
+            // Mobile touch events
             cityElement.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                activeCity = cityElement;
-                activeCity.setAttribute('data-dragged', 'true');
-                activeCity.style.position = 'absolute';
-                activeCity.style.pointerEvents = 'none'; // Prevent interaction with other elements
-
-                // Store the offset of the touch within the element
-                const rect = activeCity.getBoundingClientRect();
-                activeCity.dataset.offsetX = touch.pageX - rect.left;
-                activeCity.dataset.offsetY = touch.pageY - rect.top;
+                const touch = e.changedTouches[0];
+                e.dataTransfer.setData('text', e.target.textContent);
+                e.dataTransfer.setData('coords', e.target.getAttribute('data-coords'));
+                e.target.setAttribute('data-dragged', 'true');
             });
 
-            // Handle touchmove (for mobile)
             cityElement.addEventListener('touchmove', (e) => {
-                if (activeCity) {
-                    const touch = e.touches[0];
-                    const offsetX = parseFloat(activeCity.dataset.offsetX);
-                    const offsetY = parseFloat(activeCity.dataset.offsetY);
-
-                    // Update the position of the element to follow the finger
-                    activeCity.style.left = `${touch.pageX - offsetX}px`;
-                    activeCity.style.top = `${touch.pageY - offsetY}px`;
-                }
+                const touch = e.changedTouches[0];
+                // Optionally update the UI based on touch movement (not necessary for this case)
             });
-
-            // Handle touchend (for mobile)
-            cityElement.addEventListener('touchend', (e) => {
-                if (activeCity) {
-                    const touch = e.changedTouches[0];
-
-                    // Get city data from the activeCity element
-                    const cityName = activeCity.textContent;
-                    const cityCoords = JSON.parse(activeCity.getAttribute('data-coords'));
-
-                    // Get the drop position on the map
-                    const mapContainer = document.getElementById('map');
-                    const x = touch.pageX - mapContainer.offsetLeft;
-                    const y = touch.pageY - mapContainer.offsetTop;
-
-                    // Convert touch position to map's lat/lng
-                    const latlng = map.containerPointToLatLng([x, y]);
-                    const lat = latlng.lat;
-                    const lng = latlng.lng;
-
-                    // Handle the drop logic (score update, marker placement)
-                    handleDrop(cityName, cityCoords, lat, lng);
-
-                    // Reset the activeCity
-                    activeCity.style.position = '';
-                    activeCity.style.pointerEvents = ''; // Enable interaction again
-                    activeCity = null;
-                }
-            });
-
         });
 
         // Enable map container to accept drops
@@ -186,6 +141,19 @@ document.addEventListener('DOMContentLoaded', () => {
             handleDrop(e, cityName, cityCoords, lat, lng);
         });
 
+        // Mobile touch drop handler
+        mapContainer.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            const x = touch.pageX - mapContainer.offsetLeft;
+            const y = touch.pageY - mapContainer.offsetTop;
+
+            const latlng = map.containerPointToLatLng([x, y]);
+            const lat = latlng.lat;
+            const lng = latlng.lng;
+
+            handleDrop(e, cityName, cityCoords, lat, lng);
+        });
     };
 
     // Handle drop logic for both touch and drag events
