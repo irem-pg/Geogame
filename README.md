@@ -3,9 +3,11 @@
 
 * 2200674002 İrem ADAY
 
+### Link to the Game
+
 ### Github-Pages of the Game
 
-https://github.com/GMT-458-Web-GIS/geogame-Irem-aday
+https://github.com/irem-pg/Geogame
 
 # GeoGame - Cities of Countries
 
