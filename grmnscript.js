@@ -112,6 +112,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const touch = e.changedTouches[0];
                 // Optionally update the UI based on touch movement (not necessary for this case)
             });
+
+            // Handle touchend (for mobile)
+            cityElement.addEventListener('touchend', (e) => {
+                if (activeCity) {
+                    const touch = e.changedTouches[0];
+
+                    // Get city data from the activeCity element
+                    const cityName = activeCity.textContent;
+                    const cityCoords = JSON.parse(activeCity.getAttribute('data-coords'));
+
+                    // Get the drop position on the map
+                    const mapContainer = document.getElementById('map');
+                    const x = touch.pageX - mapContainer.offsetLeft;
+                    const y = touch.pageY - mapContainer.offsetTop;
+
+                    // Convert touch position to map's lat/lng
+                    const latlng = map.containerPointToLatLng([x, y]);
+                    const lat = latlng.lat;
+                    const lng = latlng.lng;
+
+                    // Handle the drop logic (score update, marker placement)
+                    handleDrop(cityName, cityCoords, lat, lng);
+
+                    // Reset the activeCity
+                    activeCity.style.position = '';
+                    activeCity.style.pointerEvents = ''; // Enable interaction again
+                    activeCity = null;
+                }
+            });
         });
 
         // Enable map container to accept drops
@@ -138,20 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const lng = latlng.lng;
 
             // Handle drop logic
-            handleDrop(e, cityName, cityCoords, lat, lng);
-        });
-
-        // Mobile touch drop handler
-        mapContainer.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            const touch = e.changedTouches[0];
-            const x = touch.pageX - mapContainer.offsetLeft;
-            const y = touch.pageY - mapContainer.offsetTop;
-
-            const latlng = map.containerPointToLatLng([x, y]);
-            const lat = latlng.lat;
-            const lng = latlng.lng;
-
             handleDrop(e, cityName, cityCoords, lat, lng);
         });
     };
