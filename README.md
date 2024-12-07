@@ -5,6 +5,8 @@
 
 ### Link to the Game
 
+https://irem-pg.github.io/Geogame/
+
 ### Github-Pages of the Game
 
 https://github.com/irem-pg/Geogame
