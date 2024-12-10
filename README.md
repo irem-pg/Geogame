@@ -5,7 +5,11 @@
 
 ### Github-Pages of the Game
 
-https://github.com/GMT-458-Web-GIS/geogame-Irem-aday
+https://github.com/irem-pg/Geogame
+
+### User link for the Game
+
+https://irem-pg.github.io/Geogame/
 
 # GeoGame - Cities of Countries
 
